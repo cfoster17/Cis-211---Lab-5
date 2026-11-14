@@ -44,7 +44,7 @@ if fulfillment == "Pickup":
     delivery_fee = 0.0
 else:
     delivery_fee = shipping_fee(subtotal)
-  st.subheader("Current Quote")
+st.subheader("Current Quote")
 col1, col2 = st.columns(2)
 
 with col1:
