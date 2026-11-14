@@ -3,8 +3,8 @@ menu = {
   "cupcake": 3.75,
   "cookie": 2.00,
   "muffin": 2.75, 
-  "scone": 3.25
-  "brownie": 3.00
+  "scone": 3.25,
+  "brownie": 3.00,
 }
 sample_sales = {
   "cupcake": 18
