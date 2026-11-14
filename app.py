@@ -18,7 +18,7 @@ def apply_discount(subtotal):
   Applies a 10% discount if the original subtotal reaches or exceeds $50.00.
   Returns the rounded remaining item subtotal.
   """
-  if subtotal>= 50.00
+  if subtotal>= 50.00:
    return round (subtotal * 0.90, 2)
   return subtotal 
   def shipping_fee(subtotal):
