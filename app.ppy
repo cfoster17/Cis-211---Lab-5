@@ -1,0 +1,114 @@
+import streamlit as st
+
+# 1. Define menu and sample sales data dictionaries
+menu = {
+    "cupcake": 3.75,
+    "cookie": 2.00,
+    "muffin": 2.75,
+    "scone": 3.25,
+    "brownie": 3.00
+}
+
+sample_sales = {
+    "cupcake": 18,
+    "cookie": 30,
+    "muffin": 12,
+    "scone": 10,
+    "brownie": 15
+}
+
+# 2. Required Functions (Defined before main app calls)
+def apply_discount(subtotal):
+    """
+    Applies a 10% discount if the original subtotal reaches or exceeds $50.00.
+    Returns the rounded remaining item subtotal.
+    """
+    if subtotal >= 50.00:
+        return round(subtotal * 0.90, 2)
+    return subtotal
+
+def shipping_fee(subtotal):
+    """
+    Calculates delivery fee. Free ($0.00) if subtotal >= $35.00, otherwise $5.99.
+    """
+    if subtotal >= 35.00:
+        return 0.0
+    return 5.99
+
+# 3. Sidebar Input Controls
+st.sidebar.header("Order Options")
+customer_name = st.sidebar.text_input("Customer name or nickname", value="")
+product = st.sidebar.selectbox("Product", options=list(menu.keys()))
+quantity = st.sidebar.number_input("Quantity", min_value=1, max_value=30, value=1, step=1)
+fulfillment = st.sidebar.selectbox("Fulfillment", options=["Pickup", "Delivery"])
+show_chart = st.sidebar.checkbox("Show sample sales chart", value=True)
+
+# 4. Main Page Header and Layout
+st.title("🥖 Bright Bakery Order Calculator")
+st.markdown("Calculate your bakery quote, review the menu, and inspect sample sales data below.")
+
+# 5. Calculations (Executed from current inputs before layout)
+# Explanatory Comment: We use the original subtotal for both discount and shipping thresholds 
+# because discount and delivery rules evaluate the baseline order value before deductions or fees.
+unit_price = menu[product]
+subtotal = unit_price * quantity
+discounted_subtotal = apply_discount(subtotal)
+discount_amount = round(subtotal - discounted_subtotal, 2)
+
+# Explanatory Comment: Pickup bypasses the delivery fee entirely (set to $0.00), whereas 
+# Delivery evaluates the shipping_fee function based on the original subtotal threshold.
+if fulfillment == "Pickup":
+    delivery_fee = 0.0
+else:
+    delivery_fee = shipping_fee(subtotal)
+
+total = round(discounted_subtotal + delivery_fee, 2)
+
+# 6. Two-Column Quote Display (Placed outside the check button block so it updates in real time)
+st.subheader("Current Quote")
+col1, col2 = st.columns(2)
+
+with col1:
+    st.write("**Selected Product:**", product.capitalize())
+    st.write("**Quantity:**", quantity)
+    st.write("**Unit Price:**", f"${unit_price:.2f}")
+    st.write("**Fulfillment Method:**", fulfillment)
+
+with col2:
+    st.write("**Original Subtotal:**", f"${subtotal:.2f}")
+    st.write("**Discount Amount:**", f"${discount_amount:.2f}")
+    st.write("**Delivery Fee:**", f"${delivery_fee:.2f}")
+    st.metric(label="Final Total", value=f"${total:.2f}")
+
+st.divider()
+
+# 7. Menu Table and Sample Sales Chart Display
+st.subheader("Bakery Menu")
+# Build menu table data from dictionary keys and values
+import pandas as pd
+menu_df = pd.DataFrame({
+    "Product": [p.capitalize() for p in menu.keys()],
+    "Price ($)": [f"${price:.2f}" for price in menu.values()]
+})
+st.dataframe(menu_df, hide_index=True, use_container_width=True)
+
+st.subheader("Sample Sales")
+st.caption("Fictional practice sales data for display purposes.")
+if show_chart:
+    # Explanatory Comment: sort=False is used to preserve the exact product order defined 
+    # in the sample_sales dictionary rather than sorting alphabetically by product name.
+    sales_df = pd.DataFrame({
+        "Product": [p.capitalize() for p in sample_sales.keys()],
+        "Units sold": list(sample_sales.values())
+    }).set_index("Product")
+    st.bar_chart(sales_df, sort=False)
+
+st.divider()
+
+# 8. Check Quote Button and Feedback
+if st.button("Check quote"):
+    cleaned_name = customer_name.strip()
+    if not cleaned_name:
+        st.warning("Please enter a customer name or nickname before checking your quote.")
+    else:
+        st.success(f"Thank you, {cleaned_name}! Your quote has been reviewed. Note: This practice app does not save orders or take payments.")
