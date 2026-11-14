@@ -7,11 +7,11 @@ menu = {
   "brownie": 3.00,
 }
 sample_sales = {
-  "cupcake": 18
-  "cookie": 30
-  "muffin": 12
-  "scone": 10
-  "brownie": 15
+  "cupcake": 18,
+  "cookie": 30,
+  "muffin": 12,
+  "scone": 10,
+  "brownie": 15,
 }
 def apply_discount(subtotal):
   """
