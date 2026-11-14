@@ -76,7 +76,7 @@ if show_chart:
         "Product": [p.capitalize() for p in sample_sales.keys()],
         "Units sold": list(sample_sales.values())
     }).set_index("Product")
-    st.bar_chart(sales_df, sort=False)
+ st.bar_chart(sales_df, sort=False)
 
 st.divider()
 if st.button("Check quote"):
